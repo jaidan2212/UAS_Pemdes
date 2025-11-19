@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS transaksi (
     jenis_layanan TEXT,
     berat REAL,
     total_harga REAL,
+    diskon REAL,
     status TEXT,
     FOREIGN KEY(id_pelanggan) REFERENCES pelanggan(id_pelanggan)
 )

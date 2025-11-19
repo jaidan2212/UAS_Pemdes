@@ -19,13 +19,13 @@ def get_pelanggan():
     conn.close()
     return rows
 
-def insert_transaksi(id_pelanggan, tanggal, jenis_layanan, berat, total_harga, status):
+def insert_transaksi(id_pelanggan, tanggal, jenis_layanan, berat, total_harga, diskon, status):
     conn = koneksi()
     cursor = conn.cursor()
     cursor.execute("""
-        INSERT INTO transaksi (id_pelanggan, tanggal, jenis_layanan, berat, total_harga, status)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (id_pelanggan, tanggal, jenis_layanan, berat, total_harga, status))
+        INSERT INTO transaksi (id_pelanggan, tanggal, jenis_layanan, berat, total_harga, diskon, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (id_pelanggan, tanggal, jenis_layanan, berat, total_harga, diskon, status))
     conn.commit()
     conn.close()
 
@@ -33,7 +33,7 @@ def get_transaksi():
     conn = koneksi()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT t.id_transaksi, p.nama, t.tanggal, t.jenis_layanan, t.berat, t.total_harga, t.status
+        SELECT t.id_transaksi, p.nama, t.tanggal, t.jenis_layanan, t.berat, t.total_harga, t.diskon, t.status
         FROM transaksi t
         JOIN pelanggan p ON t.id_pelanggan = p.id_pelanggan
     """)

@@ -5,8 +5,9 @@ from datetime import datetime
 
 root = tk.Tk()
 root.title("Aplikasi Laundry")
-root.geometry("700x500")
+root.geometry("750x500")
 
+# === Frame Pelanggan ===
 frame_pelanggan = tk.LabelFrame(root, text="Data Pelanggan", padx=10, pady=10)
 frame_pelanggan.pack(fill="x", padx=10, pady=5)
 
@@ -37,10 +38,8 @@ tk.Button(frame_pelanggan, text="Simpan", command=simpan_pelanggan).grid(row=3, 
 
 # === Tabel Pelanggan ===
 tree_pelanggan = ttk.Treeview(root, columns=("ID", "Nama", "Alamat", "No HP"), show="headings")
-tree_pelanggan.heading("ID", text="ID")
-tree_pelanggan.heading("Nama", text="Nama")
-tree_pelanggan.heading("Alamat", text="Alamat")
-tree_pelanggan.heading("No HP", text="No HP")
+for col in ("ID", "Nama", "Alamat", "No HP"):
+    tree_pelanggan.heading(col, text=col)
 tree_pelanggan.pack(fill="x", padx=10, pady=5)
 
 def tampil_pelanggan():
@@ -51,6 +50,7 @@ def tampil_pelanggan():
 
 tampil_pelanggan()
 
+# === Frame Transaksi ===
 frame_transaksi = tk.LabelFrame(root, text="Transaksi Laundry", padx=10, pady=10)
 frame_transaksi.pack(fill="x", padx=10, pady=5)
 
@@ -69,21 +69,40 @@ entry_jenis.grid(row=1, column=1)
 entry_berat.grid(row=2, column=1)
 entry_status.grid(row=3, column=1)
 
+# === Fungsi Diskon ===
+def hitung_total_dengan_diskon(berat, harga_per_kg=7000):
+    total_awal = berat * harga_per_kg
+    if berat >= 7:
+        diskon = 0.15
+    elif berat >= 3:
+        diskon = 0.10
+    else:
+        diskon = 0.0
+    total_akhir = total_awal * (1 - diskon)
+    return total_akhir, diskon
+
 def simpan_transaksi():
-    id_pel = entry_id_pelanggan.get()
-    jenis = entry_jenis.get()
-    berat = float(entry_berat.get())
-    status = entry_status.get()
-    total = berat * 7000  # contoh harga/kg
-    tanggal = datetime.now().strftime("%Y-%m-%d")
-    database.insert_transaksi(id_pel, tanggal, jenis, berat, total, status)
-    messagebox.showinfo("Berhasil", "Transaksi disimpan!")
-    tampil_transaksi()
+    try:
+        id_pel = entry_id_pelanggan.get()
+        jenis = entry_jenis.get()
+        berat = float(entry_berat.get())
+        status = entry_status.get()
+        tanggal = datetime.now().strftime("%Y-%m-%d")
+
+        total, diskon = hitung_total_dengan_diskon(berat)
+
+        database.insert_transaksi(id_pel, tanggal, jenis, berat, total, diskon, status)
+
+        messagebox.showinfo("Berhasil", f"Transaksi disimpan!\nDiskon: {int(diskon*100)}%\nTotal: Rp{int(total)}")
+        tampil_transaksi()
+    except ValueError:
+        messagebox.showerror("Error", "Berat harus berupa angka!")
 
 tk.Button(frame_transaksi, text="Simpan Transaksi", command=simpan_transaksi).grid(row=4, column=1, pady=5)
 
-tree_transaksi = ttk.Treeview(root, columns=("ID", "Nama", "Tanggal", "Layanan", "Berat", "Total", "Status"), show="headings")
-for col in ("ID", "Nama", "Tanggal", "Layanan", "Berat", "Total", "Status"):
+# === Tabel Transaksi ===
+tree_transaksi = ttk.Treeview(root, columns=("ID", "Nama", "Tanggal", "Layanan", "Berat", "Total", "Diskon", "Status"), show="headings")
+for col in ("ID", "Nama", "Tanggal", "Layanan", "Berat", "Total", "Diskon", "Status"):
     tree_transaksi.heading(col, text=col)
 tree_transaksi.pack(fill="both", expand=True, padx=10, pady=5)
 
