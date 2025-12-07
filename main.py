@@ -60,7 +60,15 @@ tk.Label(frame_transaksi, text="Berat (kg):").grid(row=2, column=0)
 tk.Label(frame_transaksi, text="Status:").grid(row=3, column=0)
 
 entry_id_pelanggan = tk.Entry(frame_transaksi)
-entry_jenis = tk.Entry(frame_transaksi)
+# Opsi layanan default — ubah/luaskan sesuai kebutuhan
+jenis_options = [
+    "Cuci Kering",
+    "Cuci Basah",
+    "Setrika",
+    "Cuci & Setrika",
+]
+entry_jenis = ttk.Combobox(frame_transaksi, values=jenis_options, state="readonly")
+entry_jenis.current(0)
 entry_berat = tk.Entry(frame_transaksi)
 entry_status = tk.Entry(frame_transaksi)
 
@@ -104,6 +112,20 @@ tk.Button(frame_transaksi, text="Simpan Transaksi", command=simpan_transaksi).gr
 tree_transaksi = ttk.Treeview(root, columns=("ID", "Nama", "Tanggal", "Layanan", "Berat", "Total", "Diskon", "Status"), show="headings")
 for col in ("ID", "Nama", "Tanggal", "Layanan", "Berat", "Total", "Diskon", "Status"):
     tree_transaksi.heading(col, text=col)
+    
+col_widths = {
+    "ID": 50,
+    "Nama": 180,
+    "Tanggal": 100,
+    "Layanan": 120,
+    "Berat": 60,
+    "Total": 100,
+    "Diskon": 80,
+    "Status": 90,
+}
+for col, w in col_widths.items():
+    tree_transaksi.column(col, width=w, minwidth=20, anchor="center")
+
 tree_transaksi.pack(fill="both", expand=True, padx=10, pady=5)
 
 def tampil_transaksi():
